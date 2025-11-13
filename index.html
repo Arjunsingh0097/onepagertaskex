@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskex - Workflow Automation for Growing Teams</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1EBE9C;
+            --primary-hover: #1aa085;
+            --bg-black: #000000;
+            --bg-neutral-900: #171717;
+            --bg-neutral-800: #262626;
+            --text-white: #ffffff;
+            --text-gray-300: #d4d4d4;
+            --text-gray-400: #a3a3a3;
+            --border-neutral-800: #262626;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            position: sticky;
+            top: 4px;
+            z-index: 50;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+        }
+
+        .header-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .logo {
+            height: 80px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            font-weight: 500;
+        }
+
+        nav a {
+            color: var(--text-white);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .header-cta {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--text-white);
+            padding: 0.625rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: var(--primary-color);
+            color: var(--text-white);
+            border: none;
+            padding: 0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-menu-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 288px;
+            background: linear-gradient(to bottom, #064e3b, var(--bg-neutral-900));
+            border-right: 1px solid var(--border-neutral-800);
+            z-index: 1000;
+            padding: 1rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .mobile-drawer.open {
+            transform: translateX(0);
+        }
+
+        .mobile-drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+        }
+
+        .mobile-drawer-overlay.open {
+            display: block;
+        }
+
+        .mobile-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-neutral-800);
+            margin-bottom: 1rem;
+        }
+
+        .mobile-drawer-close {
+            background: var(--bg-neutral-950);
+            color: var(--text-white);
+            border: none;
+            padding: 0.625rem 0.875rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            list-style: none;
+        }
+
+        .mobile-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 0.375rem 0.5rem;
+            color: var(--text-white);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: background 0.3s;
+        }
+
+        .mobile-nav a:hover {
+            background: var(--bg-neutral-800);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-black);
+            overflow: hidden;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, rgba(83, 83, 83, 0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, #000 70%, transparent 110%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 1.5rem;
+            position: relative;
+            z-index: 10;
+            max-width: 896px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.25rem, 5vw, 4.5rem);
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+        }
+
+        .hero p {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            color: var(--text-gray-300);
+            max-width: 42rem;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-subtitle {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-cta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-hero {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-hero-primary {
+            background: var(--primary-color);
+            color: var(--text-white);
+            position: relative;
+        }
+
+        .btn-hero-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(to top, var(--primary-color), #4ECFB0);
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+
+        .btn-hero-secondary {
+            background: transparent;
+            color: var(--text-white);
+            border: none;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 6rem 1.5rem;
+            background: var(--bg-black);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: clamp(2.25rem, 5vw, 3.75rem);
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-gray-400);
+            text-align: center;
+            max-width: 42rem;
+            margin: 0 auto 4rem;
+        }
+
+        /* Services Section */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .service-card {
+            background: var(--bg-neutral-900);
+            border: 1px solid var(--border-neutral-800);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: var(--primary-color);
+        }
+
+        .service-image {
+            width: 100%;
+            height: 192px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover .service-image {
+            transform: scale(1.1);
+        }
+
+        .service-content {
+            padding: 1.5rem;
+        }
+
+        .service-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            transition: color 0.3s;
+        }
+
+        .service-card:hover .service-title {
+            color: var(--primary-color);
+        }
+
+        .service-description {
+            color: var(--text-gray-400);
+            line-height: 1.6;
+        }
+
+        /* Carousel Section */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 70vmin;
+            height: 70vmin;
+            margin: 0 auto;
+        }
+
+        .carousel-slides {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            transform: scale(0.98) rotateX(8deg);
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            transform: scale(1) rotateX(0deg);
+            z-index: 10;
+        }
+
+        .carousel-slide-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1%;
+        }
+
+        .carousel-content {
+            position: absolute;
+            bottom: 4vmin;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: var(--text-white);
+            z-index: 20;
+        }
+
+        .carousel-title {
+            font-size: clamp(1.125rem, 3vw, 2.25rem);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .carousel-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-neutral-800);
+            border: 3px solid transparent;
+            color: var(--text-gray-200);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .carousel-btn:hover {
+            background: var(--bg-neutral-700);
+            border-color: var(--primary-color);
+        }
+
+        /* World Map Section */
+        .world-map-container {
+            width: 100%;
+            aspect-ratio: 2 / 1;
+            position: relative;
+            background: var(--bg-black);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .world-map-svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .world-map-background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
+            z-index: 0;
+            mask-image: linear-gradient(to bottom, transparent, white 10%, white 90%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, white 10%, white 90%, transparent);
+            opacity: 1;
+        }
+
+        .map-path {
+            fill: none;
+            stroke: var(--primary-color);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 3px rgba(30, 190, 156, 0.8));
+            opacity: 0;
+        }
+
+        .map-path.animated {
+            opacity: 1;
+        }
+
+        .map-path-base {
+            fill: none;
+            stroke: var(--primary-color);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.3;
+        }
+
+        .map-dot {
+            fill: var(--primary-color);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .map-dot-pulse {
+            fill: var(--primary-color);
+            opacity: 0;
+        }
+
+        /* Wobble Card Section */
+        .wobble-card {
+            max-width: 896px;
+            margin: 0 auto;
+            background: linear-gradient(to bottom right, var(--bg-neutral-900), var(--bg-neutral-800), var(--bg-neutral-900));
+            border: 1px solid var(--border-neutral-800);
+            border-radius: 1rem;
+            padding: 5rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reasons-list {
+            list-style: none;
+        }
+
+        .reason-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .reason-check {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 4px;
+        }
+
+        .reason-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .reason-content p {
+            color: var(--text-gray-300);
+            line-height: 1.6;
+        }
+
+        /* Testimonials Section */
+        .testimonials-container {
+            max-width: 896px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .testimonials-images {
+            position: relative;
+            width: 100%;
+            height: 320px;
+        }
+
+        .testimonial-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1.5rem;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.4s;
+        }
+
+        .testimonial-image.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: 40;
+        }
+
+        .testimonial-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-designation {
+            font-size: 0.875rem;
+            color: var(--text-gray-500);
+            margin-bottom: 2rem;
+        }
+
+        .testimonial-quote {
+            font-size: 1.125rem;
+            color: var(--text-gray-300);
+            line-height: 1.6;
+        }
+
+        .testimonial-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-neutral-800);
+            border: 1px solid var(--border-neutral-700);
+            color: var(--text-gray-300);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .testimonial-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--text-white);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #16a085 100%);
+            border-radius: 1.5rem;
+            padding: 5rem 3rem;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(30, 190, 156, 0.3);
+            max-width: 896px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: clamp(2.25rem, 5vw, 3.75rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-white);
+        }
+
+        .cta-description {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 42rem;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+
+        .btn-cta {
+            background: var(--text-white);
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.125rem;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-cta:hover {
+            background: #f3f4f6;
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-black);
+            border-top: 1px solid var(--border-neutral-800);
+            padding: 4rem 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo {
+            height: 80px;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            color: var(--text-gray-400);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-neutral-800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .social-link:hover {
+            background: var(--primary-color);
+        }
+
+        .footer-column h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--text-gray-400);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-contact-item {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-contact-icon {
+            color: var(--primary-color);
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-neutral-800);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-copyright {
+            color: var(--text-gray-400);
+            font-size: 0.875rem;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-legal a {
+            color: var(--text-gray-400);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s;
+        }
+
+        .footer-legal a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            header {
+                padding: 1rem;
+            }
+
+            .header-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .logo-container {
+                justify-content: flex-start;
+                text-align: left;
+                flex-shrink: 0;
+            }
+
+            .logo {
+                height: 60px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .header-cta {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 0.75rem;
+                flex-shrink: 0;
+            }
+
+            .header-cta .btn-primary {
+                font-size: 0.875rem;
+                padding: 0.5rem 0.875rem;
+                white-space: nowrap;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                width: 40px;
+                height: 40px;
+                z-index: 10;
+                flex-shrink: 0;
+                margin: 0;
+            }
+
+            .mobile-drawer {
+                display: block;
+            }
+
+            .testimonials-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-cta {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="public/images/taskex.png" alt="Taskex Logo" class="logo">
+            </div>
+            <nav>
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#services">Services</a>
+            </nav>
+            <div class="header-cta">
+                <a href="#contact" class="btn-primary">Get in touch</a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer-overlay" id="mobileOverlay"></div>
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div class="mobile-drawer-header">
+            <img src="public/images/taskex.png" alt="Taskex Logo" style="height: 48px;">
+            <button class="mobile-drawer-close" id="mobileCloseBtn">✕</button>
+        </div>
+        <ul class="mobile-nav">
+            <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
+            <li><a href="#about" onclick="closeMobileMenu()">About</a></li>
+            <li><a href="#services" onclick="closeMobileMenu()">Services</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <h1>Workflow Automation for Growing Teams</h1>
+            <div>
+                <p class="hero-subtitle">Your Complete Business Solutions Partner Across All Industries</p>
+                <p>From contractual tech work and business process services to payroll, HR solutions, digital marketing, and PPC campaigns—we provide end-to-end business solutions that drive growth and efficiency across every industry.</p>
+            </div>
+            <div class="hero-cta">
+                <a href="#contact" class="btn-hero btn-hero-primary">Start Your Free Trial</a>
+                <button class="btn-hero btn-hero-secondary">Book a Free Demo ▶</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Everything you need to streamline your workflow and boost productivity</p>
+            <div class="services-grid">
+                <div class="service-card">
+                    <img src="public/images/Software_Development.png" alt="Software Development" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Software Development</h3>
+                        <p class="service-description">Custom software solutions, SaaS platforms, and web applications built with cutting-edge technologies to drive your business forward.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="public/images/Data_Analytics_Insights.png" alt="Data Analytics & Insights" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Data Analytics & Insights</h3>
+                        <p class="service-description">Transform your data into actionable insights with advanced analytics, business intelligence, and data-driven strategies for growth.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="public/images/Payroll_HR_Services.png" alt="Payroll & HR Services" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Payroll & HR Services</h3>
+                        <p class="service-description">Comprehensive payroll management, HR solutions, and compliance services that streamline your workforce operations.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="public/images/Digital_Marketing_PPC.png" alt="Digital Marketing & PPC" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Digital Marketing & PPC</h3>
+                        <p class="service-description">Boost your online presence with data-driven marketing strategies, targeted PPC campaigns, and SEO optimization.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="public/images/Contractual_Tech_Work.png" alt="Contractual Tech Work" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Contractual Tech Work</h3>
+                        <p class="service-description">Flexible engagement models for tech projects. Get expert developers and specialists on-demand to accelerate your initiatives.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="public/images/Business_Process_Services.png" alt="Business Process Services" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Business Process Services</h3>
+                        <p class="service-description">Streamline operations with process optimization, automation solutions, and workflow improvements that increase efficiency.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Carousel Section -->
+    <section>
+        <div class="container">
+            <div class="carousel-container">
+                <div class="carousel-slides" id="carouselSlides">
+                    <div class="carousel-slide active">
+                        <img src="public/images/1.png" alt="Transform Your Business" class="carousel-slide-image">
+                        <div class="carousel-content">
+                            <h2 class="carousel-title">Transform Your Business</h2>
+                            <button class="btn-primary">Get Started</button>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="public/images/2.png" alt="Data-Driven Decisions" class="carousel-slide-image">
+                        <div class="carousel-content">
+                            <h2 class="carousel-title">Data-Driven Decisions</h2>
+                            <button class="btn-primary">Learn More</button>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="public/images/3.png" alt="Streamline Operations" class="carousel-slide-image">
+                        <div class="carousel-content">
+                            <h2 class="carousel-title">Streamline Operations</h2>
+                            <button class="btn-primary">Explore</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-controls">
+                    <button class="carousel-btn" id="carouselPrev">‹</button>
+                    <button class="carousel-btn" id="carouselNext">›</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- World Map Section -->
+    <section id="global-presence">
+        <div class="container">
+            <h2 class="section-title">Global Presence</h2>
+            <p class="section-subtitle">Connecting teams and services across the world</p>
+            <div class="world-map-container" id="worldMapContainer">
+                <img id="dottedMapImage" src="world-map.svg" alt="World Map" class="world-map-background-image">
+                <svg class="world-map-svg" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" id="worldMapSvg" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <linearGradient id="path-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="white" stop-opacity="0" />
+                            <stop offset="5%" stop-color="#1EBE9C" stop-opacity="1" />
+                            <stop offset="95%" stop-color="#1EBE9C" stop-opacity="1" />
+                            <stop offset="100%" stop-color="white" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Paths will be generated by JavaScript -->
+                    <g id="mapPaths"></g>
+                    <g id="mapDots"></g>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wobble Card Section -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">Why Clients Love Working with Us</h2>
+            <div class="wobble-card">
+                <ul class="reasons-list">
+                    <li class="reason-item">
+                        <div class="reason-check">✓</div>
+                        <div class="reason-content">
+                            <h3>Speed + Quality</h3>
+                            <p>Delivering 40% faster than industry average while maintaining pixel-perfect quality and testing at every step.</p>
+                        </div>
+                    </li>
+                    <li class="reason-item">
+                        <div class="reason-check">✓</div>
+                        <div class="reason-content">
+                            <h3>Unmatched Security</h3>
+                            <p>Military-grade encryption and compliance with SOC 2 and ISO 27001 ensure your data is always protected.</p>
+                        </div>
+                    </li>
+                    <li class="reason-item">
+                        <div class="reason-check">✓</div>
+                        <div class="reason-content">
+                            <h3>Expert-Only Teams</h3>
+                            <p>Every project is handled by seasoned professionals — no interns or untested juniors on mission-critical tasks.</p>
+                        </div>
+                    </li>
+                    <li class="reason-item">
+                        <div class="reason-check">✓</div>
+                        <div class="reason-content">
+                            <h3>Transparent Pricing</h3>
+                            <p>Flat-rate packages, zero hidden costs, and complete transparency in every billing cycle.</p>
+                        </div>
+                    </li>
+                    <li class="reason-item">
+                        <div class="reason-check">✓</div>
+                        <div class="reason-content">
+                            <h3>24/7 Human Support</h3>
+                            <p>You'll always talk to a dedicated expert, not a bot — ensuring fast solutions and real accountability.</p>
+                        </div>
+                    </li>
+                    <li class="reason-item">
+                        <div class="reason-check">✓</div>
+                        <div class="reason-content">
+                            <h3>Next-Gen Technology</h3>
+                            <p>AI, ML, and cloud-native frameworks power your projects with performance and scalability.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">What Our Clients Say</h2>
+            <p class="section-subtitle">Don't just take our word for it — hear from our satisfied clients</p>
+            <div class="testimonials-container">
+                <div class="testimonials-images">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop" alt="Sarah Johnson" class="testimonial-image active">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop" alt="Michael Chen" class="testimonial-image">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop" alt="Emily Rodriguez" class="testimonial-image">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=500&fit=crop" alt="David Thompson" class="testimonial-image">
+                </div>
+                <div class="testimonial-content">
+                    <h3 id="testimonialName">Sarah Johnson</h3>
+                    <p class="testimonial-designation" id="testimonialDesignation">CEO, TechStart Inc.</p>
+                    <p class="testimonial-quote" id="testimonialQuote">Taskex has transformed how we manage our workflows. The speed and quality of their delivery exceeded our expectations. Highly recommended!</p>
+                    <div class="testimonial-controls">
+                        <button class="testimonial-btn" id="testimonialPrev">‹</button>
+                        <button class="testimonial-btn" id="testimonialNext">›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="cta-section">
+                <h2 class="cta-title">Experience the Taskex Advantage</h2>
+                <p class="cta-description">Join 500+ businesses that scale faster and smarter with our expert-driven development and 24/7 global support.</p>
+                <button class="btn-cta">Start Your Project</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div>
+                <img src="public/images/taskex.png" alt="Taskex Logo" class="footer-logo">
+                <p class="footer-description">Transforming businesses with cutting-edge technology solutions and expert-driven development.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+                    <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+                    <a href="#" class="social-link" aria-label="Facebook">f</a>
+                    <a href="#" class="social-link" aria-label="Instagram">📷</a>
+                </div>
+            </div>
+            <div>
+                <h3>Services</h3>
+                <ul class="footer-links">
+                    <li><a href="#services">Software Development</a></li>
+                    <li><a href="#services">Data Analytics & Insights</a></li>
+                    <li><a href="#services">Payroll & HR Services</a></li>
+                    <li><a href="#services">Digital Marketing & PPC</a></li>
+                    <li><a href="#services">Contractual Tech Work</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Company</h3>
+                <ul class="footer-links">
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <ul class="footer-links">
+                    <li class="footer-contact-item">
+                        <span class="footer-contact-icon">✉</span>
+                        <a href="mailto:info@taskex.com">info@taskex.com</a>
+                    </li>
+                    <li class="footer-contact-item">
+                        <span class="footer-contact-icon">📞</span>
+                        <a href="tel:+1234567890">+1 (234) 567-890</a>
+                    </li>
+                    <li class="footer-contact-item">
+                        <span class="footer-contact-icon">📍</span>
+                        <span>123 Business Street<br>City, State 12345</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2024 Taskex Technologies Private Limited. All rights reserved.</p>
+            <div class="footer-legal">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Cookies</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+
+        function openMobileMenu() {
+            mobileDrawer.classList.add('open');
+            mobileOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            mobileDrawer.classList.remove('open');
+            mobileOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        mobileCloseBtn.addEventListener('click', closeMobileMenu);
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+
+        // Carousel
+        const carouselSlides = document.querySelectorAll('.carousel-slide');
+        const carouselPrev = document.getElementById('carouselPrev');
+        const carouselNext = document.getElementById('carouselNext');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            carouselSlides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % carouselSlides.length;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + carouselSlides.length) % carouselSlides.length;
+            showSlide(currentSlide);
+        }
+
+        carouselNext.addEventListener('click', nextSlide);
+        carouselPrev.addEventListener('click', prevSlide);
+
+        // Auto-advance carousel
+        setInterval(nextSlide, 5000);
+
+        // Testimonials
+        const testimonials = [
+            {
+                name: 'Sarah Johnson',
+                designation: 'CEO, TechStart Inc.',
+                quote: 'Taskex has transformed how we manage our workflows. The speed and quality of their delivery exceeded our expectations. Highly recommended!',
+                image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop'
+            },
+            {
+                name: 'Michael Chen',
+                designation: 'CTO, DataSecure Corp.',
+                quote: 'Their security measures and expert team gave us complete confidence. The transparent pricing model is exactly what we needed.',
+                image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop'
+            },
+            {
+                name: 'Emily Rodriguez',
+                designation: 'Operations Manager, GlobalTech',
+                quote: '24/7 human support means we\'re never stuck. The team is always available and incredibly responsive. Outstanding service!',
+                image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop'
+            },
+            {
+                name: 'David Thompson',
+                designation: 'Founder, CloudScale Solutions',
+                quote: 'The next-gen technology stack they use has significantly improved our performance and scalability. Game-changing partnership!',
+                image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=500&fit=crop'
+            }
+        ];
+
+        const testimonialImages = document.querySelectorAll('.testimonial-image');
+        const testimonialName = document.getElementById('testimonialName');
+        const testimonialDesignation = document.getElementById('testimonialDesignation');
+        const testimonialQuote = document.getElementById('testimonialQuote');
+        const testimonialPrev = document.getElementById('testimonialPrev');
+        const testimonialNext = document.getElementById('testimonialNext');
+        let currentTestimonial = 0;
+
+        function showTestimonial(index) {
+            testimonialImages.forEach((img, i) => {
+                img.classList.toggle('active', i === index);
+            });
+            testimonialName.textContent = testimonials[index].name;
+            testimonialDesignation.textContent = testimonials[index].designation;
+            testimonialQuote.textContent = testimonials[index].quote;
+        }
+
+        function nextTestimonial() {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            showTestimonial(currentTestimonial);
+        }
+
+        function prevTestimonial() {
+            currentTestimonial = (currentTestimonial - 1 + testimonials.length) % testimonials.length;
+            showTestimonial(currentTestimonial);
+        }
+
+        testimonialNext.addEventListener('click', nextTestimonial);
+        testimonialPrev.addEventListener('click', prevTestimonial);
+
+        // Auto-advance testimonials
+        setInterval(nextTestimonial, 5000);
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // World Map
+        const mapDots = [
+            { start: { lat: 40.7128, lng: -74.006, label: "New York" }, end: { lat: 51.5074, lng: -0.1278, label: "London" } },
+            { start: { lat: 37.7749, lng: -122.4194, label: "San Francisco" }, end: { lat: 35.6762, lng: 139.6503, label: "Tokyo" } },
+            { start: { lat: -33.8688, lng: 151.2093, label: "Sydney" }, end: { lat: 28.6139, lng: 77.209, label: "Delhi" } },
+            { start: { lat: 48.8566, lng: 2.3522, label: "Paris" }, end: { lat: 52.52, lng: 13.405, label: "Berlin" } },
+            { start: { lat: 19.4326, lng: -99.1332, label: "Mexico City" }, end: { lat: -23.5505, lng: -46.6333, label: "São Paulo" } },
+            { start: { lat: 55.7558, lng: 37.6173, label: "Moscow" }, end: { lat: 39.9042, lng: 116.4074, label: "Beijing" } },
+            { start: { lat: 25.2048, lng: 55.2708, label: "Dubai" }, end: { lat: -26.2041, lng: 28.0473, label: "Johannesburg" } },
+            { start: { lat: 1.3521, lng: 103.8198, label: "Singapore" }, end: { lat: 22.3193, lng: 114.1694, label: "Hong Kong" } },
+            { start: { lat: 41.9028, lng: 12.4964, label: "Rome" }, end: { lat: 30.0444, lng: 31.2357, label: "Cairo" } },
+            { start: { lat: 34.0522, lng: -118.2437, label: "Los Angeles" }, end: { lat: 45.5017, lng: -73.5673, label: "Montreal" } },
+            { start: { lat: -34.6037, lng: -58.3816, label: "Buenos Aires" }, end: { lat: -12.0464, lng: -77.0428, label: "Lima" } },
+            { start: { lat: 59.3293, lng: 18.0686, label: "Stockholm" }, end: { lat: 64.1466, lng: -21.9426, label: "Reykjavik" } }
+        ];
+
+        function projectPoint(lat, lng) {
+            const x = (lng + 180) * (800 / 360);
+            const y = (90 - lat) * (400 / 180);
+            return { x, y };
+        }
+
+        function createCurvedPath(start, end) {
+            const midX = (start.x + end.x) / 2;
+            const midY = Math.min(start.y, end.y) - 80;
+            return `M ${start.x} ${start.y} Q ${midX} ${midY} ${end.x} ${end.y}`;
+        }
+
+
+        function createDottedBackground() {
+            // Use the pre-generated SVG file (same as original website)
+            const mapImage = document.getElementById('dottedMapImage');
+            if (mapImage) {
+                // Image source is already set in HTML
+                mapImage.style.display = 'block';
+                mapImage.onload = function() {
+                    console.log('Dotted map image loaded successfully');
+                };
+                mapImage.onerror = function() {
+                    console.error('Error loading dotted map image, using fallback');
+                    createFallbackDottedBackground();
+                };
+            } else {
+                createFallbackDottedBackground();
+            }
+        }
+
+        function createFallbackDottedBackground() {
+            // Fallback: Create a simple dotted pattern if library fails
+            const svg = document.getElementById('worldMapSvg');
+            if (!svg) return;
+
+            if (document.getElementById('mapBackgroundDots')) return;
+
+            const dotsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            dotsGroup.setAttribute('id', 'mapBackgroundDots');
+            dotsGroup.setAttribute('opacity', '0.25');
+            
+            // Create diagonal grid pattern like dotted-map
+            const dotSpacing = 4;
+            const dotRadius = 0.22;
+            const dotColor = '#FFFFFF40';
+            
+            // Create dots in a diagonal pattern
+            for (let x = -400; x <= 1200; x += dotSpacing) {
+                for (let y = -200; y <= 600; y += dotSpacing) {
+                    // Diagonal offset
+                    const offsetX = (y % (dotSpacing * 2)) === 0 ? 0 : dotSpacing / 2;
+                    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    dot.setAttribute('cx', x + offsetX);
+                    dot.setAttribute('cy', y);
+                    dot.setAttribute('r', dotRadius);
+                    dot.setAttribute('fill', dotColor);
+                    dotsGroup.appendChild(dot);
+                }
+            }
+            
+            const mapPaths = document.getElementById('mapPaths');
+            if (mapPaths && mapPaths.parentNode) {
+                mapPaths.parentNode.insertBefore(dotsGroup, mapPaths);
+            } else {
+                svg.appendChild(dotsGroup);
+            }
+        }
+
+
+        function drawWorldMap() {
+            const mapPathsGroup = document.getElementById('mapPaths');
+            const mapDotsGroup = document.getElementById('mapDots');
+            
+            if (!mapPathsGroup || !mapDotsGroup) return;
+
+            const lineColor = '#1EBE9C';
+
+            // Draw paths
+            mapDots.forEach((dot, i) => {
+                const startPoint = projectPoint(dot.start.lat, dot.start.lng);
+                const endPoint = projectPoint(dot.end.lat, dot.end.lng);
+                const pathData = createCurvedPath(startPoint, endPoint);
+
+                // Base path (subtle)
+                const basePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                basePath.setAttribute('d', pathData);
+                basePath.setAttribute('class', 'map-path-base');
+                basePath.setAttribute('stroke', lineColor);
+                mapPathsGroup.appendChild(basePath);
+
+                // Animated path
+                const animatedPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                animatedPath.setAttribute('d', pathData);
+                animatedPath.setAttribute('class', 'map-path');
+                animatedPath.setAttribute('stroke', lineColor);
+                animatedPath.setAttribute('data-index', i);
+                animatedPath.setAttribute('fill', 'none');
+                animatedPath.setAttribute('opacity', '0');
+                
+                // Add to DOM first so we can calculate path length
+                mapPathsGroup.appendChild(animatedPath);
+                
+                // Calculate path length - estimate if getTotalLength() doesn't work
+                let pathLength = animatedPath.getTotalLength();
+                if (pathLength === 0 || isNaN(pathLength)) {
+                    // Estimate path length based on distance between points
+                    const dx = endPoint.x - startPoint.x;
+                    const dy = endPoint.y - startPoint.y;
+                    const straightDist = Math.sqrt(dx * dx + dy * dy);
+                    // Curved path is longer, estimate 1.5x straight distance
+                    pathLength = straightDist * 1.5;
+                }
+                animatedPath.setAttribute('stroke-dasharray', pathLength);
+                animatedPath.setAttribute('stroke-dashoffset', pathLength);
+
+                // Start dot
+                const startDotGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                startDotGroup.setAttribute('data-index', i);
+                startDotGroup.setAttribute('data-type', 'start');
+
+                // Start dot (solid)
+                const startDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                startDot.setAttribute('cx', startPoint.x);
+                startDot.setAttribute('cy', startPoint.y);
+                startDot.setAttribute('r', '3');
+                startDot.setAttribute('fill', lineColor);
+                startDot.setAttribute('class', 'map-dot');
+                startDot.setAttribute('opacity', '0');
+                startDot.setAttribute('transform', `scale(0) translate(${startPoint.x}, ${startPoint.y}) translate(-${startPoint.x}, -${startPoint.y})`);
+                startDotGroup.appendChild(startDot);
+
+                // Start pulse circle
+                const startPulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                startPulse.setAttribute('cx', startPoint.x);
+                startPulse.setAttribute('cy', startPoint.y);
+                startPulse.setAttribute('r', '3');
+                startPulse.setAttribute('fill', lineColor);
+                startPulse.setAttribute('opacity', '0.5');
+                startPulse.setAttribute('data-pulse-index', i);
+                startPulse.setAttribute('data-pulse-type', 'start');
+                
+                // Add animate elements for pulse
+                const startPulseR = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                startPulseR.setAttribute('attributeName', 'r');
+                startPulseR.setAttribute('from', '3');
+                startPulseR.setAttribute('to', '12');
+                startPulseR.setAttribute('dur', '2s');
+                startPulseR.setAttribute('begin', `${1.5 + (i * 0.3)}s`);
+                startPulseR.setAttribute('repeatCount', 'indefinite');
+                startPulse.appendChild(startPulseR);
+                
+                const startPulseOpacity = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                startPulseOpacity.setAttribute('attributeName', 'opacity');
+                startPulseOpacity.setAttribute('from', '0.6');
+                startPulseOpacity.setAttribute('to', '0');
+                startPulseOpacity.setAttribute('dur', '2s');
+                startPulseOpacity.setAttribute('begin', `${1.5 + (i * 0.3)}s`);
+                startPulseOpacity.setAttribute('repeatCount', 'indefinite');
+                startPulse.appendChild(startPulseOpacity);
+                
+                startDotGroup.appendChild(startPulse);
+
+                mapDotsGroup.appendChild(startDotGroup);
+
+                // End dot
+                const endDotGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                endDotGroup.setAttribute('data-index', i);
+                endDotGroup.setAttribute('data-type', 'end');
+
+                // End dot (solid)
+                const endDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                endDot.setAttribute('cx', endPoint.x);
+                endDot.setAttribute('cy', endPoint.y);
+                endDot.setAttribute('r', '3');
+                endDot.setAttribute('fill', lineColor);
+                endDot.setAttribute('class', 'map-dot');
+                endDot.setAttribute('opacity', '0');
+                endDot.setAttribute('transform', `scale(0) translate(${endPoint.x}, ${endPoint.y}) translate(-${endPoint.x}, -${endPoint.y})`);
+                endDotGroup.appendChild(endDot);
+
+                // End pulse circle
+                const endPulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                endPulse.setAttribute('cx', endPoint.x);
+                endPulse.setAttribute('cy', endPoint.y);
+                endPulse.setAttribute('r', '3');
+                endPulse.setAttribute('fill', lineColor);
+                endPulse.setAttribute('opacity', '0.5');
+                endPulse.setAttribute('data-pulse-index', i);
+                endPulse.setAttribute('data-pulse-type', 'end');
+                
+                // Add animate elements for pulse
+                const endPulseR = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                endPulseR.setAttribute('attributeName', 'r');
+                endPulseR.setAttribute('from', '3');
+                endPulseR.setAttribute('to', '12');
+                endPulseR.setAttribute('dur', '2s');
+                endPulseR.setAttribute('begin', `${1.5 + (i * 0.3)}s`);
+                endPulseR.setAttribute('repeatCount', 'indefinite');
+                endPulse.appendChild(endPulseR);
+                
+                const endPulseOpacity = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                endPulseOpacity.setAttribute('attributeName', 'opacity');
+                endPulseOpacity.setAttribute('from', '0.6');
+                endPulseOpacity.setAttribute('to', '0');
+                endPulseOpacity.setAttribute('dur', '2s');
+                endPulseOpacity.setAttribute('begin', `${1.5 + (i * 0.3)}s`);
+                endPulseOpacity.setAttribute('repeatCount', 'indefinite');
+                endPulse.appendChild(endPulseOpacity);
+                
+                endDotGroup.appendChild(endPulse);
+
+                mapDotsGroup.appendChild(endDotGroup);
+            });
+        }
+
+        function animateWorldMap() {
+            const dots = document.querySelectorAll('.map-dot');
+            const paths = document.querySelectorAll('.map-path');
+
+            // Animate paths with staggered timing - exactly like original
+            paths.forEach((path, i) => {
+                const pathLength = path.getTotalLength();
+                if (pathLength > 0) {
+                    path.setAttribute('stroke-dasharray', pathLength);
+                    path.setAttribute('stroke-dashoffset', pathLength);
+                    path.setAttribute('opacity', '0');
+                    
+                    // Animate path drawing
+                    setTimeout(() => {
+                        // Use requestAnimationFrame for smooth animation
+                        const startTime = performance.now();
+                        const duration = 2500; // 2.5s
+                        const delay = 200 + (i * 300);
+                        
+                        setTimeout(() => {
+                            path.setAttribute('opacity', '1');
+                            path.style.transition = 'stroke-dashoffset 2.5s ease-in-out';
+                            path.setAttribute('stroke-dashoffset', '0');
+                        }, delay);
+                    }, 0);
+                }
+            });
+
+            // Animate dots with staggered timing - exactly like original (1.5s delay + i * 0.3s)
+            dots.forEach((dot, i) => {
+                const cx = dot.getAttribute('cx');
+                const cy = dot.getAttribute('cy');
+                const delay = 1500 + (Math.floor(i / 2) * 300); // Each connection has 2 dots (start and end)
+                setTimeout(() => {
+                    dot.setAttribute('opacity', '1');
+                    dot.setAttribute('transform', `scale(1) translate(${cx}, ${cy}) translate(-${cx}, -${cy})`);
+                }, delay);
+            });
+        }
+
+        // Initialize world map when DOM is ready
+        function initWorldMap() {
+            // Wait a bit to ensure SVG is fully rendered
+            setTimeout(() => {
+                // Create background pattern first
+                createDottedBackground();
+                // Then draw paths and dots after a short delay
+                setTimeout(() => {
+                    drawWorldMap();
+                }, 50);
+            }, 100);
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initWorldMap);
+        } else {
+            initWorldMap();
+        }
+
+        // Animate when section comes into view
+        const worldMapObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateWorldMap();
+                    worldMapObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        const worldMapSection = document.getElementById('global-presence');
+        if (worldMapSection) {
+            worldMapObserver.observe(worldMapSection);
+        }
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card, .wobble-card, .cta-section').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
