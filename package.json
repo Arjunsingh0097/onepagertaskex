@@ -1,0 +1,22 @@
+{
+  "name": "onepagertaskex",
+  "version": "1.0.0",
+  "description": "Taskex one-page website with black theme",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve . -p 3000",
+    "build": "echo 'Build complete - static HTML site ready for deployment'",
+    "deploy": "git push origin main"
+  },
+  "keywords": [
+    "taskex",
+    "website",
+    "one-page"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}
+
